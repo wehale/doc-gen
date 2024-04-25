@@ -1,0 +1,6 @@
+openai==1.23.3
+argparse==1.4.0
+sphinx
+myst_parser
+jsonlines
+sphinx_rtd_theme
