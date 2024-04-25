@@ -32,11 +32,18 @@ fi
 if [ ! -d "./doc_pub" ]; then
     echo "Creating the doc_pub directory"
     mkdir doc_pub
+    echo "Creating sphinx template which will be used to publish documentation..."
+    cd doc_pub
+    sphinx-quickstart
+    cd ..
 fi
+
+# debug
+# exit 0
 
 # Run the application
 echo "Running the application"
-python doc-gen.py $1 $2
+python doc-gen.py $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 # Copy generated .md files to the pub directory
 echo "Copying generated .md files to the pub directory"

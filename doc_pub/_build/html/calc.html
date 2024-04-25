@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>calc.c &mdash; doc-gen.ai  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SpellChecker.java" href="SpellChecker.html" />
+    <link rel="prev" title="Welcome to doc-gen.ai’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            doc-gen.ai
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">calc.c</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description-of-calc-c">Description of calc.c</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions-in-calc-c">Functions in calc.c</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ctoi-char-c"><code class="docutils literal notranslate"><span class="pre">ctoi(char</span> <span class="pre">c)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-usage">Example Usage:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#itoc-int-i"><code class="docutils literal notranslate"><span class="pre">itoc(int</span> <span class="pre">i)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Example Usage:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#add-buffers-char-bufa-char-bufb"><code class="docutils literal notranslate"><span class="pre">add_buffers(char</span> <span class="pre">*bufA,</span> <span class="pre">char</span> <span class="pre">*bufB)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">Notes:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Example Usage:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#multiply-char-a-int-lena-char-b-int-lenb"><code class="docutils literal notranslate"><span class="pre">multiply(char</span> <span class="pre">*a,</span> <span class="pre">int</span> <span class="pre">lenA,</span> <span class="pre">char</span> <span class="pre">*b,</span> <span class="pre">int</span> <span class="pre">lenB)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Example Usage:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#main-int-argc-char-argv"><code class="docutils literal notranslate"><span class="pre">main(int</span> <span class="pre">argc,</span> <span class="pre">char</span> <span class="pre">*argv[])</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Example Usage:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#security-vulnerabilities-in-calc-c">Security Vulnerabilities in calc.c</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#buffer-overflow">Buffer Overflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#null-pointer-dereference">Null Pointer Dereference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-argument-handling">Command Line Argument Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-of-uninitialized-memory">Use of Uninitialized Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integer-overflow">Integer Overflow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SpellChecker.html">SpellChecker.java</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">doc-gen.ai</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">calc.c</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/calc.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="calc-c">
+<h1>calc.c<a class="headerlink" href="#calc-c" title="Link to this heading"></a></h1>
+<section id="description-of-calc-c">
+<h2>Description of calc.c<a class="headerlink" href="#description-of-calc-c" title="Link to this heading"></a></h2>
+<p>The provided source code is a C program that performs the multiplication of two large numbers represented as strings. The main components of the program are as follows:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ctoi()</span></code> Function:</p>
+<ul class="simple">
+<li><p>Converts a character representing a digit (0-9) to its corresponding integer value.</p></li>
+<li><p>Parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">c</span></code>: The character to be converted.</p></li>
+</ul>
+</li>
+<li><p>Returns <code class="docutils literal notranslate"><span class="pre">-1</span></code> if the character is not between ‘0’ and ‘9’, otherwise returns the integer value of the character.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">itoc()</span></code> Function:</p>
+<ul class="simple">
+<li><p>Converts an integer (0-9) to its corresponding character.</p></li>
+<li><p>Parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">i</span></code>: The integer to be converted.</p></li>
+</ul>
+</li>
+<li><p>Returns <code class="docutils literal notranslate"><span class="pre">'\0'</span></code> if the integer is not between 0 and 9, otherwise returns the character representation of the integer.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_buffers()</span></code> Function:</p>
+<ul class="simple">
+<li><p>Performs addition on two null-terminated strings <code class="docutils literal notranslate"><span class="pre">bufA</span></code> and <code class="docutils literal notranslate"><span class="pre">bufB</span></code> that represent numbers, storing the result back into <code class="docutils literal notranslate"><span class="pre">bufA</span></code>.</p></li>
+<li><p>Assumes that <code class="docutils literal notranslate"><span class="pre">bufA</span></code> and <code class="docutils literal notranslate"><span class="pre">bufB</span></code> are of the same length and contain only digit characters.</p></li>
+<li><p>The addition is done in place, and <code class="docutils literal notranslate"><span class="pre">bufA</span></code> is modified to hold the result of the sum.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multiply()</span></code> Function:</p>
+<ul class="simple">
+<li><p>Multiplies two numbers represented as strings <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p></li>
+<li><p>Parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*a</span></code>: The first number as a string.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">lenA</span></code>: The length of the first number string.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*b</span></code>: The second number as a string.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">lenB</span></code>: The length of the second number string.</p></li>
+</ul>
+</li>
+<li><p>Allocates memory for the buffer to hold the result and a return buffer initialized with zeros.</p></li>
+<li><p>Performs the multiplication digit by digit, taking care of carry, and adds the intermediate results using <code class="docutils literal notranslate"><span class="pre">add_buffers()</span></code>.</p></li>
+<li><p>Returns a pointer to the buffer containing the result. It is the caller’s responsibility to free this memory.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main()</span></code> Function:</p>
+<ul class="simple">
+<li><p>Entry point of the program.</p></li>
+<li><p>Accepts two command-line arguments representing the numbers to be multiplied.</p></li>
+<li><p>Calls the <code class="docutils literal notranslate"><span class="pre">multiply()</span></code> function with the provided arguments.</p></li>
+<li><p>Prints the result of the multiplication.</p></li>
+<li><p>Frees the memory allocated for the result before exiting.</p></li>
+</ul>
+</li>
+</ol>
+<p>Additional Details:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">multiply()</span></code> function assumes that the input strings consist of digits only and do not have leading zeros.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">memset()</span></code> function is used to initialize the result buffer with zeros.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calloc()</span></code> is used to allocate memory for buffers, which is initialized to zero.</p></li>
+<li><p>Intermediate and final results are stored in dynamically allocated buffers which are freed after their use.</p></li>
+<li><p>The program includes commented-out code for testing the <code class="docutils literal notranslate"><span class="pre">add_buffers()</span></code> function and for printing the inputs.</p></li>
+</ul>
+<p>Overall, the program is capable of multiplying very large numbers that may not fit into standard data types such as <code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">long</span></code>. It outputs the result of the multiplication in the form of “number1 * number2 = result”.</p>
+</section>
+<section id="functions-in-calc-c">
+<h2>Functions in calc.c<a class="headerlink" href="#functions-in-calc-c" title="Link to this heading"></a></h2>
+<section id="ctoi-char-c">
+<h3><code class="docutils literal notranslate"><span class="pre">ctoi(char</span> <span class="pre">c)</span></code><a class="headerlink" href="#ctoi-char-c" title="Link to this heading"></a></h3>
+<p>Converts a character to the corresponding integer value if the character is a digit (‘0’ to ‘9’). Otherwise, returns -1.</p>
+<section id="parameters">
+<h4>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">c</span></code>: The character to convert.</p></li>
+</ul>
+</section>
+<section id="returns">
+<h4>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">int</span></code> of the converted digit.</p></li>
+<li><p>Returns <code class="docutils literal notranslate"><span class="pre">-1</span></code> if <code class="docutils literal notranslate"><span class="pre">c</span></code> is not a digit.</p></li>
+</ul>
+</section>
+<section id="example-usage">
+<h4>Example Usage:<a class="headerlink" href="#example-usage" title="Link to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">digit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctoi</span><span class="p">(</span><span class="sc">&#39;3&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// digit will be 3</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">non_digit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctoi</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// non_digit will be -1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="itoc-int-i">
+<h3><code class="docutils literal notranslate"><span class="pre">itoc(int</span> <span class="pre">i)</span></code><a class="headerlink" href="#itoc-int-i" title="Link to this heading"></a></h3>
+<p>Converts an integer to the corresponding character if the integer is between 0 and 9.</p>
+<section id="id1">
+<h4>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">i</span></code>: The integer to convert.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h4>Returns:<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">char</span></code> of the converted integer.</p></li>
+<li><p>Returns <code class="docutils literal notranslate"><span class="pre">'\0'</span></code> if <code class="docutils literal notranslate"><span class="pre">i</span></code> is not between 0 and 9.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h4>Example Usage:<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="n">character</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itoc</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span><span class="w"> </span><span class="c1">// character will be &#39;5&#39;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">invalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itoc</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span><span class="w"> </span><span class="c1">// invalid will be &#39;\0&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="add-buffers-char-bufa-char-bufb">
+<h3><code class="docutils literal notranslate"><span class="pre">add_buffers(char</span> <span class="pre">*bufA,</span> <span class="pre">char</span> <span class="pre">*bufB)</span></code><a class="headerlink" href="#add-buffers-char-bufa-char-bufb" title="Link to this heading"></a></h3>
+<p>Performs in-place addition of two null-terminated strings representing numbers of equal length.</p>
+<section id="id4">
+<h4>Parameters:<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*bufA</span></code>: A string representing the first number. The sum will be stored here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*bufB</span></code>: A string representing the second number, to be added to <code class="docutils literal notranslate"><span class="pre">bufA</span></code>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h4>Returns:<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<p>Nothing. The result of the addition is stored in <code class="docutils literal notranslate"><span class="pre">bufA</span></code>.</p>
+</section>
+<section id="notes">
+<h4>Notes:<a class="headerlink" href="#notes" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Both <code class="docutils literal notranslate"><span class="pre">bufA</span></code> and <code class="docutils literal notranslate"><span class="pre">bufB</span></code> are expected to have the same length.</p></li>
+<li><p>Assumes the strings only contain digit characters (‘0’ to ‘9’).</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4>Example Usage:<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="n">bufA</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;6&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;2&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">};</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">bufB</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;8&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">};</span>
+<span class="n">add_buffers</span><span class="p">(</span><span class="n">bufA</span><span class="p">,</span><span class="w"> </span><span class="n">bufB</span><span class="p">);</span><span class="w"> </span><span class="c1">// bufA now contains the string &quot;0170&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="multiply-char-a-int-lena-char-b-int-lenb">
+<h3><code class="docutils literal notranslate"><span class="pre">multiply(char</span> <span class="pre">*a,</span> <span class="pre">int</span> <span class="pre">lenA,</span> <span class="pre">char</span> <span class="pre">*b,</span> <span class="pre">int</span> <span class="pre">lenB)</span></code><a class="headerlink" href="#multiply-char-a-int-lena-char-b-int-lenb" title="Link to this heading"></a></h3>
+<p>Multiplies two strings that represent numbers and returns a new string representing the product.</p>
+<section id="id7">
+<h4>Parameters:<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*a</span></code>: A string representing the first number to multiply.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">lenA</span></code>: The length of string <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*b</span></code>: A string representing the second number to multiply.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">lenB</span></code>: The length of string <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h4>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A pointer to a null-terminated string representing the product.</p></li>
+<li><p>The caller is responsible for freeing the allocated memory.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>Example Usage:<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">multiply</span><span class="p">(</span><span class="s">&quot;123&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;456&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="c1">// product -&gt; &quot;56088&quot;</span>
+<span class="n">free</span><span class="p">(</span><span class="n">product</span><span class="p">);</span><span class="w"> </span><span class="c1">// Remember to free the allocated memory!</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="main-int-argc-char-argv">
+<h3><code class="docutils literal notranslate"><span class="pre">main(int</span> <span class="pre">argc,</span> <span class="pre">char</span> <span class="pre">*argv[])</span></code><a class="headerlink" href="#main-int-argc-char-argv" title="Link to this heading"></a></h3>
+<p>The main entry point of the program, which takes command-line arguments and prints the product of two large numbers.</p>
+<section id="id10">
+<h4>Parameters:<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">argc</span></code>: Argument count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*argv[]</span></code>: Argument vector.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h4>Returns:<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">int</span></code> representing the exit status of the program. Returns <code class="docutils literal notranslate"><span class="pre">0</span></code> on successful execution.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h4>Example Usage:<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<p>Run the program via command line with two arguments:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>./program_name<span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span>
+</pre></div>
+</div>
+<p>The output will be:</p>
+<div class="highlight-plaintext notranslate"><div class="highlight"><pre><span></span>123 * 456 = 56088
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="security-vulnerabilities-in-calc-c">
+<h2>Security Vulnerabilities in calc.c<a class="headerlink" href="#security-vulnerabilities-in-calc-c" title="Link to this heading"></a></h2>
+<section id="buffer-overflow">
+<h3>Buffer Overflow<a class="headerlink" href="#buffer-overflow" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">add_buffers</span></code> function does not perform any bounds checking on the input buffers <code class="docutils literal notranslate"><span class="pre">bufA</span></code> and <code class="docutils literal notranslate"><span class="pre">bufB</span></code>. This has the potential to cause a buffer overflow if either of the input buffers is shorter than expected. If the length is not properly validated before calling this function, an attacker could exploit this vulnerability to execute arbitrary code or cause a crash.</p>
+</section>
+<section id="null-pointer-dereference">
+<h3>Null Pointer Dereference<a class="headerlink" href="#null-pointer-dereference" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiply</span></code> function returns a pointer to dynamically allocated memory that is expected to be freed by the caller. If the caller forgets to free this memory or if the result pointer is <code class="docutils literal notranslate"><span class="pre">NULL</span></code> due to unsuccessful memory allocation and not checked for <code class="docutils literal notranslate"><span class="pre">NULL</span></code> before being used, this can lead to a memory leak or a null pointer dereference, respectively.</p>
+</section>
+<section id="command-line-argument-handling">
+<h3>Command Line Argument Handling<a class="headerlink" href="#command-line-argument-handling" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">main</span></code> function does not check if there are enough command line arguments (<code class="docutils literal notranslate"><span class="pre">argc</span></code>) before attempting to use them. If the program is run with fewer than the expected number of arguments, it will attempt to access <code class="docutils literal notranslate"><span class="pre">argv[1]</span></code> and <code class="docutils literal notranslate"><span class="pre">argv[2]</span></code> which may lead to undefined behavior or a segmentation fault.</p>
+</section>
+<section id="use-of-uninitialized-memory">
+<h3>Use of Uninitialized Memory<a class="headerlink" href="#use-of-uninitialized-memory" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">add_buffers</span></code> function relies on both <code class="docutils literal notranslate"><span class="pre">bufA</span></code> and <code class="docutils literal notranslate"><span class="pre">bufB</span></code> being null-terminated strings of equal lengths. If <code class="docutils literal notranslate"><span class="pre">bufA</span></code> or <code class="docutils literal notranslate"><span class="pre">bufB</span></code> is not properly null-terminated or does not contain only the digits ‘0’ to ‘9’, the behavior of the <code class="docutils literal notranslate"><span class="pre">add_buffers</span></code> function is undefined. This may lead to incorrect calculations or potential out-of-bound memory access.</p>
+</section>
+<section id="integer-overflow">
+<h3>Integer Overflow<a class="headerlink" href="#integer-overflow" title="Link to this heading"></a></h3>
+<p>Both <code class="docutils literal notranslate"><span class="pre">ctoi</span></code> and <code class="docutils literal notranslate"><span class="pre">itoc</span></code> functions are designed to work with digits ‘0’ to ‘9’ only. The code does not handle cases where the input value might lead to integer overflow or underflow, which could result from arithmetic operations with characters outside the range of ‘0’ to ‘9’.</p>
+<p>Overall, the source code contains several potential vulnerabilities including buffer overflow, null pointer dereference, improper argument handling, uninitialized memory usage, and integer overflow or underflow. It is crucial to address these issues to prevent exploits and crashes in a production environment.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to doc-gen.ai’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="SpellChecker.html" class="btn btn-neutral float-right" title="SpellChecker.java" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

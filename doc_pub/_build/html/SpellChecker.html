@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpellChecker.java &mdash; doc-gen.ai  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="calc.c" href="calc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            doc-gen.ai
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="calc.html">calc.c</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SpellChecker.java</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description-of-spellchecker-java">Description of SpellChecker.java</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions-in-spellchecker-java">Functions in SpellChecker.java</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spellchecker-set-string-dic"><code class="docutils literal notranslate"><span class="pre">SpellChecker(Set&lt;String&gt;</span> <span class="pre">dic)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checkwords-string-infile"><code class="docutils literal notranslate"><span class="pre">checkWords(String</span> <span class="pre">inFile)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#throws">Throws:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#alterchar-string-aword"><code class="docutils literal notranslate"><span class="pre">alterChar(String</span> <span class="pre">aWord)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#omitchar-string-aword"><code class="docutils literal notranslate"><span class="pre">omitChar(String</span> <span class="pre">aWord)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#insertchar-string-aword"><code class="docutils literal notranslate"><span class="pre">insertChar(String</span> <span class="pre">aWord)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xchangechar-string-aword"><code class="docutils literal notranslate"><span class="pre">xchangeChar(String</span> <span class="pre">aWord)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Returns:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#loaddictionary-set-string-dic-string-dictfile"><code class="docutils literal notranslate"><span class="pre">loadDictionary(Set&lt;String&gt;</span> <span class="pre">dic,</span> <span class="pre">String</span> <span class="pre">dictFile)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id14">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">Throws:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">Notes:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#main-string-args"><code class="docutils literal notranslate"><span class="pre">main(String[]</span> <span class="pre">args)</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id17">Parameters:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">Notes:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#security-vulnerabilities-in-spellchecker-java">Security Vulnerabilities in SpellChecker.java</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-handling-vulnerabilities">File Handling Vulnerabilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filenotfoundexception-handling-in-main"><code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> Handling in <code class="docutils literal notranslate"><span class="pre">main</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uncontrolled-input-in-main">Uncontrolled Input in <code class="docutils literal notranslate"><span class="pre">main</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#code-execution-vulnerabilities">Code Execution Vulnerabilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#system-resource-leak-in-loaddictionary">System Resource Leak in <code class="docutils literal notranslate"><span class="pre">loadDictionary</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#general-coding-practices">General Coding Practices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#not-securing-sensitive-data">Not Securing Sensitive Data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#potential-dos-attacks">Potential DOS Attacks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#inefficient-resource-management">Inefficient Resource Management</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#data-validation-vulnerabilities">Data Validation Vulnerabilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#improper-input-validation-in-checkwords">Improper Input Validation in <code class="docutils literal notranslate"><span class="pre">checkWords</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inadequate-error-handling-across-method-calls">Inadequate Error Handling Across Method Calls</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">doc-gen.ai</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SpellChecker.java</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SpellChecker.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="spellchecker-java">
+<h1>SpellChecker.java<a class="headerlink" href="#spellchecker-java" title="Link to this heading"></a></h1>
+<section id="description-of-spellchecker-java">
+<h2>Description of SpellChecker.java<a class="headerlink" href="#description-of-spellchecker-java" title="Link to this heading"></a></h2>
+<p>The provided source code is an implementation of a spell checker in Java, contained within the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> class, designed to process text files and identify misspelled words against a supplied dictionary. Here is a detailed description of its components:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> Class:</p>
+<ul>
+<li><p><strong>Purpose</strong>: Provides spell checking functionality by comparing words in an input file against a dictionary of correctly spelled words.</p></li>
+<li><p><strong>Main Attributes</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">misspelled</span></code>: A <code class="docutils literal notranslate"><span class="pre">Map</span></code> that maps misspelled words to a list of line numbers where the misspelling occurs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dictionary</span></code>: A <code class="docutils literal notranslate"><span class="pre">Set</span></code> that holds the correct words to check against.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpellChecker(Set&lt;String&gt;</span> <span class="pre">dic)</span></code> Constructor:</p>
+<ul>
+<li><p>Initializes the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> with a dictionary to be used for checking spelling.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkWords(String</span> <span class="pre">inFile)</span></code> Method:</p>
+<ul>
+<li><p>Reads the given input file line by line.</p></li>
+<li><p>Tokenizes each line into words using whitespace as the delimiter.</p></li>
+<li><p>Identifies misspelled words and records the line number for each occurrence.</p></li>
+<li><p>Throws <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> if the input file is not found.</p></li>
+</ul>
+</li>
+<li><p>Private helper methods (<code class="docutils literal notranslate"><span class="pre">alterChar</span></code>, <code class="docutils literal notranslate"><span class="pre">omitChar</span></code>, <code class="docutils literal notranslate"><span class="pre">swapChar</span></code>, <code class="docutils literal notranslate"><span class="pre">insertChar</span></code>, <code class="docutils literal notranslate"><span class="pre">xchangeChar</span></code>):</p>
+<ul>
+<li><p>Generate likely correct spellings for a given misspelled word by making common alterations such as character removal, replacement, or insertion.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loadDictionary(Set&lt;String&gt;</span> <span class="pre">dic,</span> <span class="pre">String</span> <span class="pre">dictFile)</span></code> Static Method:</p>
+<ul>
+<li><p>Loads words from the given dictionary file into a <code class="docutils literal notranslate"><span class="pre">Set</span></code> to be used by the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code>.</p></li>
+<li><p>Throws <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> if the dictionary file is not found.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main(String[]</span> <span class="pre">args)</span></code> Method:</p>
+<ul>
+<li><p>Entry point for the application.</p></li>
+<li><p>Expects two command-line arguments: the input file to check and the dictionary file.</p></li>
+<li><p>Loads the dictionary file into a <code class="docutils literal notranslate"><span class="pre">Set</span></code>.</p></li>
+<li><p>Instantiates a <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> with the loaded dictionary.</p></li>
+<li><p>Checks the words in the input file and reports any findings.</p></li>
+<li><p>Handles <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> thrown by <code class="docutils literal notranslate"><span class="pre">loadDictionary</span></code> or <code class="docutils literal notranslate"><span class="pre">checkWords</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+<p>The code includes comments providing alternative approaches and justifications for chosen implementations, as well as suggestions for further responsibility division of the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code>. This class represents a flexible tool for spell checking within applications that can handle multiple dictionaries and input files.</p>
+</section>
+<section id="functions-in-spellchecker-java">
+<h2>Functions in SpellChecker.java<a class="headerlink" href="#functions-in-spellchecker-java" title="Link to this heading"></a></h2>
+<section id="spellchecker-set-string-dic">
+<h3><code class="docutils literal notranslate"><span class="pre">SpellChecker(Set&lt;String&gt;</span> <span class="pre">dic)</span></code><a class="headerlink" href="#spellchecker-set-string-dic" title="Link to this heading"></a></h3>
+<p>Initializes a new instance of the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> class with the provided dictionary.</p>
+<section id="parameters">
+<h4>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Set&lt;String&gt;</span> <span class="pre">dic</span></code>: The set of correctly spelled words to be used as the dictionary.</p></li>
+</ul>
+</section>
+<section id="notes">
+<h4>Notes:<a class="headerlink" href="#notes" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>This constructor takes a set of strings as the dictionary upon which the spell checking will be based.</p></li>
+</ul>
+</section>
+</section>
+<section id="checkwords-string-infile">
+<h3><code class="docutils literal notranslate"><span class="pre">checkWords(String</span> <span class="pre">inFile)</span></code><a class="headerlink" href="#checkwords-string-infile" title="Link to this heading"></a></h3>
+<p>Reads from an input file, tokenizes it into words, and checks each word against the dictionary to identify misspelled words.</p>
+<section id="id1">
+<h4>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">inFile</span></code>: The path to the text file that needs to be spell-checked.</p></li>
+</ul>
+</section>
+<section id="throws">
+<h4>Throws:<a class="headerlink" href="#throws" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code>: If the input file specified by <code class="docutils literal notranslate"><span class="pre">inFile</span></code> is not found.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h4>Notes:<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Scans through each line of the input file.</p></li>
+<li><p>Splits the lines into words based on whitespace.</p></li>
+<li><p>Adds misspelled words along with their line numbers to the <code class="docutils literal notranslate"><span class="pre">misspelled</span></code> map.</p></li>
+</ul>
+</section>
+</section>
+<section id="alterchar-string-aword">
+<h3><code class="docutils literal notranslate"><span class="pre">alterChar(String</span> <span class="pre">aWord)</span></code><a class="headerlink" href="#alterchar-string-aword" title="Link to this heading"></a></h3>
+<p>Generates a list of words by altering each character in the provided word.</p>
+<section id="id3">
+<h4>Parameters:<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">aWord</span></code>: The word to alter.</p></li>
+</ul>
+</section>
+<section id="returns">
+<h4>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">List&lt;String&gt;</span></code> of altered words based on the original word.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h4>Notes:<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>For each character in the input word, a new variation is created where that character is replaced by each of the alphabetic characters <code class="docutils literal notranslate"><span class="pre">a-z</span></code>.</p></li>
+<li><p>Returns the list of these variations.</p></li>
+</ul>
+</section>
+</section>
+<section id="omitchar-string-aword">
+<h3><code class="docutils literal notranslate"><span class="pre">omitChar(String</span> <span class="pre">aWord)</span></code><a class="headerlink" href="#omitchar-string-aword" title="Link to this heading"></a></h3>
+<p>Generates a list of words by omitting each character in the provided word.</p>
+<section id="id5">
+<h4>Parameters:<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">aWord</span></code>: The word from which to omit characters.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4>Returns:<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">List&lt;String&gt;</span></code> of words with each containing one less character than the original.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h4>Notes:<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Creates variations of the word by omitting each character once.</p></li>
+<li><p>Returns the resulting list of words.</p></li>
+</ul>
+</section>
+</section>
+<section id="insertchar-string-aword">
+<h3><code class="docutils literal notranslate"><span class="pre">insertChar(String</span> <span class="pre">aWord)</span></code><a class="headerlink" href="#insertchar-string-aword" title="Link to this heading"></a></h3>
+<p>Generates a list of words by inserting alphabetic characters at each position in the provided word.</p>
+<section id="id8">
+<h4>Parameters:<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">aWord</span></code>: The word to which characters are to be inserted.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>Returns:<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">List&lt;String&gt;</span></code> of words with additional characters inserted at each position.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h4>Notes:<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Returns a list of words created by inserting each of the alphabetic characters <code class="docutils literal notranslate"><span class="pre">a-z</span></code> at every position in the input word.</p></li>
+</ul>
+</section>
+</section>
+<section id="xchangechar-string-aword">
+<h3><code class="docutils literal notranslate"><span class="pre">xchangeChar(String</span> <span class="pre">aWord)</span></code><a class="headerlink" href="#xchangechar-string-aword" title="Link to this heading"></a></h3>
+<p>Generates a list of words by exchanging adjacent characters in the provided word.</p>
+<section id="id11">
+<h4>Parameters:<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">aWord</span></code>: The word whose characters are to be exchanged.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h4>Returns:<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">List&lt;String&gt;</span></code> of words with adjacent characters swapped.</p></li>
+</ul>
+</section>
+<section id="id13">
+<h4>Notes:<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>For each pair of adjacent characters in the word, a new word is formed by swapping those two characters.</p></li>
+<li><p>Returns the list of these new words.</p></li>
+</ul>
+</section>
+</section>
+<section id="loaddictionary-set-string-dic-string-dictfile">
+<h3><code class="docutils literal notranslate"><span class="pre">loadDictionary(Set&lt;String&gt;</span> <span class="pre">dic,</span> <span class="pre">String</span> <span class="pre">dictFile)</span></code><a class="headerlink" href="#loaddictionary-set-string-dic-string-dictfile" title="Link to this heading"></a></h3>
+<p>Loads words from the specified dictionary file into a set.</p>
+<section id="id14">
+<h4>Parameters:<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Set&lt;String&gt;</span> <span class="pre">dic</span></code>: The set to load words into, which will be used as a dictionary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">dictFile</span></code>: The path to the dictionary file.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h4>Throws:<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code>: If the dictionary file specified by <code class="docutils literal notranslate"><span class="pre">dictFile</span></code> is not found.</p></li>
+</ul>
+</section>
+<section id="id16">
+<h4>Notes:<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Reads words from the dictionary file one at a time and adds them to the provided set.</p></li>
+</ul>
+</section>
+</section>
+<section id="main-string-args">
+<h3><code class="docutils literal notranslate"><span class="pre">main(String[]</span> <span class="pre">args)</span></code><a class="headerlink" href="#main-string-args" title="Link to this heading"></a></h3>
+<p>The main entry point for the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code> application.</p>
+<section id="id17">
+<h4>Parameters:<a class="headerlink" href="#id17" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">String[]</span> <span class="pre">args</span></code>: An array of strings representing command-line arguments; expects the path to the input file followed by the path to the dictionary file.</p></li>
+</ul>
+</section>
+<section id="id18">
+<h4>Notes:<a class="headerlink" href="#id18" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Verifies that the required command-line arguments are provided.</p></li>
+<li><p>If the arguments are correct, it loads the words from the dictionary file into a set, initializes the <code class="docutils literal notranslate"><span class="pre">SpellChecker</span></code>, and starts the spell checking process for the input file.</p></li>
+<li><p>Handles <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> that may occur during the dictionary loading or word checking processes.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="security-vulnerabilities-in-spellchecker-java">
+<h2>Security Vulnerabilities in SpellChecker.java<a class="headerlink" href="#security-vulnerabilities-in-spellchecker-java" title="Link to this heading"></a></h2>
+<section id="file-handling-vulnerabilities">
+<h3>File Handling Vulnerabilities<a class="headerlink" href="#file-handling-vulnerabilities" title="Link to this heading"></a></h3>
+<section id="filenotfoundexception-handling-in-main">
+<h4><code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> Handling in <code class="docutils literal notranslate"><span class="pre">main</span></code><a class="headerlink" href="#filenotfoundexception-handling-in-main" title="Link to this heading"></a></h4>
+<p>The program does not robustly check for the existence of input files which can lead to unhandled exceptions being thrown. The <code class="docutils literal notranslate"><span class="pre">main</span></code> method catches a <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> and prints an error message without safely terminating the application, potentially revealing sensitive information such as file paths.</p>
+</section>
+<section id="uncontrolled-input-in-main">
+<h4>Uncontrolled Input in <code class="docutils literal notranslate"><span class="pre">main</span></code><a class="headerlink" href="#uncontrolled-input-in-main" title="Link to this heading"></a></h4>
+<p>The program does not validate the command-line arguments which could lead to misuse. If an attacker were to pass in a maliciously crafted filepath, it could lead to unauthorized file access if the application has the necessary permissions.</p>
+</section>
+</section>
+<section id="code-execution-vulnerabilities">
+<h3>Code Execution Vulnerabilities<a class="headerlink" href="#code-execution-vulnerabilities" title="Link to this heading"></a></h3>
+<section id="system-resource-leak-in-loaddictionary">
+<h4>System Resource Leak in <code class="docutils literal notranslate"><span class="pre">loadDictionary</span></code><a class="headerlink" href="#system-resource-leak-in-loaddictionary" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">loadDictionary</span></code> method opens a file and reads content without an explicit check for a <code class="docutils literal notranslate"><span class="pre">null</span></code> resource if the <code class="docutils literal notranslate"><span class="pre">FileReader</span></code> initialization fails, potentially leading to resource leakage.</p>
+</section>
+</section>
+<section id="general-coding-practices">
+<h3>General Coding Practices<a class="headerlink" href="#general-coding-practices" title="Link to this heading"></a></h3>
+<section id="not-securing-sensitive-data">
+<h4>Not Securing Sensitive Data<a class="headerlink" href="#not-securing-sensitive-data" title="Link to this heading"></a></h4>
+<p>The application does not have explicit mechanisms in place to protect sensitive data. The error log in the <code class="docutils literal notranslate"><span class="pre">catch</span></code> block of <code class="docutils literal notranslate"><span class="pre">main</span></code> uses <code class="docutils literal notranslate"><span class="pre">e.printStackTrace()</span></code>, which might leak sensitive information about the file system or program structure in case of exceptions being thrown.</p>
+</section>
+</section>
+<section id="potential-dos-attacks">
+<h3>Potential DOS Attacks<a class="headerlink" href="#potential-dos-attacks" title="Link to this heading"></a></h3>
+<section id="inefficient-resource-management">
+<h4>Inefficient Resource Management<a class="headerlink" href="#inefficient-resource-management" title="Link to this heading"></a></h4>
+<p>During the loading of the dictionary, there is no limit check on the number of words being read, potentially causing an OutOfMemoryError if given an extremely large dictionary file, resulting in a Denial of Service (DoS) situation.</p>
+</section>
+</section>
+<section id="data-validation-vulnerabilities">
+<h3>Data Validation Vulnerabilities<a class="headerlink" href="#data-validation-vulnerabilities" title="Link to this heading"></a></h3>
+<section id="improper-input-validation-in-checkwords">
+<h4>Improper Input Validation in <code class="docutils literal notranslate"><span class="pre">checkWords</span></code><a class="headerlink" href="#improper-input-validation-in-checkwords" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">checkWords</span></code> method assumes that the input file only contains valid words separated by white space. There are no checks against buffer overflows which can be exploited by specially crafted input files.</p>
+</section>
+<section id="inadequate-error-handling-across-method-calls">
+<h4>Inadequate Error Handling Across Method Calls<a class="headerlink" href="#inadequate-error-handling-across-method-calls" title="Link to this heading"></a></h4>
+<p>Methods <code class="docutils literal notranslate"><span class="pre">checkWords</span></code> and <code class="docutils literal notranslate"><span class="pre">loadDictionary</span></code> declare <code class="docutils literal notranslate"><span class="pre">FileNotFoundException</span></code> in their signature, indicating that the caller must handle this exception. However, the main logic in the <code class="docutils literal notranslate"><span class="pre">main</span></code> method does not address potential security concerns associated with unchecked paths or file access permissions.</p>
+<p>Overall, the source code possesses various security vulnerabilities primarily related to file handling, uncontrolled input, system resource leaks, potential data overflows, and inadequate error handling. These vulnerabilities could be mitigated by implementing robust input validation, controlled file access, proper exception handling, and systematic resource management.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="calc.html" class="btn btn-neutral float-left" title="calc.c" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
