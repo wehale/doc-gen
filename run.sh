@@ -22,7 +22,18 @@ if [ -z "$OPENAI_API_KEY" ]; then
 else
     echo "Found OPENAI_API_KEY=$OPENAI_API_KEY"
 fi  
-    
+
+# Check for doc and doc_pub directories
+echo "Checking for doc and doc_pub directories"
+if [ ! -d "./doc" ]; then
+    echo "Creating the doc directory"
+    mkdir doc
+fi
+if [ ! -d "./doc_pub" ]; then
+    echo "Creating the doc_pub directory"
+    mkdir doc_pub
+fi
+
 # Run the application
 echo "Running the application"
 python doc-gen.py $1 $2
