@@ -1,5 +1,16 @@
 from openai import OpenAI
 import time
+import json
+from sys import stdout
+
+class output_delimiters:
+  ERROR_FRAGMENT = "[ERROR_FRAGMENT]"
+  START_DESCRIPTION = "[SD]"
+  END_DESCRIPTION = "[ED]"
+  START_FUNCTIONS = "[SF]"
+  END_FUNCTIONS = "[EF]"
+  START_SV = "[SSV]"
+  END_SV = "[ESV]"
 
 class OpenAIGenerator:
 
@@ -15,7 +26,7 @@ class OpenAIGenerator:
         self._assistant = None
         self._thread = None
 
-    def generate(self, prompt: str) -> str:
+    def generate(self):
         if self._args.clean_files:
             self._delete_files()
         if self._args.clean_assistants:
@@ -23,7 +34,15 @@ class OpenAIGenerator:
         self._find_or_create_assistant()
         self._create_thread()
         for lf in self._files:
-           self._find_or_create_remote_file(lf)
+            rf = self._find_or_create_remote_file(lf)
+            self._delete_local_markdown_file(rf)
+            for p in self._prompts.iter():
+                self._create_prompt_message(p)
+                run = self._create_run(self._args.stream)
+                if self._args.stream:
+                    self._run_stream(run)
+                else:
+                    self._run_markdown(rf, p, run)
     
     def _delete_files(self):
         print(self.LOG_PREFIX + "Deleting all files from the project...")
@@ -81,84 +100,81 @@ class OpenAIGenerator:
             time.sleep(2) # Wait for the file to be uploaded to remote before continuing
   
         # Create file message for the thread
-        file_message = self._client.beta.threads.messages.create(
+        self._client.beta.threads.messages.create(
             self._thread.id,
             role="user", 
             content="Code file", 
             attachments=[{"file_id": remote_code_file.id, "tools": [{"type": "code_interpreter"}]}]
         )
 
-  # If we are writing markdown and there is a local markdown file, clear it
-  if args.stream == False:
-    open("./doc/"+remote_code_file.filename.split(".")[0]+".md", "w").close()
+        return remote_code_file
 
-  # Iterate over the prompts passing them to the thread one at a time and streaming back the output
-  # Or write the output to a markdown file depending on the passed -s argument
-  prompts = jsonlines.open("./prompt/prompts.jsonl", "r")
-  for p in prompts.iter():
-  
-    # Create a prompt message for the thread
-    thread_message = client.beta.threads.messages.create(
-      thread.id,
-      role="user",
-      content=p['description']
-    )
-    
-    # Run the thread run and get back a stream for output
-    run = client.beta.threads.runs.create(
-      thread_id=thread.id,
-      assistant_id=assistant.id,
-      stream=args.stream
-    )
+    def _delete_local_markdown_file(self, rf: str):
+        if not self._args.stream:
+            open("./doc/"+rf.split(".")[0]+".md", "w").close()
 
-    # If we are streaming, write the stream of tokens out to the console
-    if args.stream:
-      # Stream out the tokens from the run
-      for event in run:
-          match event.event:
-              case "thread.message.delta":
-                val = event.data.delta.content[0].text.value
-                if (val != None):
-                      stdout.write(val)
-              case default:
-                stdout.write(".")
-          stdout.flush()
-    else:
-      # We are writing markdown files
-      # Open the markdown file for the output with mode append
-      markdown_file = open("./doc/"+remote_code_file.filename.split(".")[0]+".md", "a")
 
-      # Wait for the run to complete and print out the messages
-      while (run.status != "completed"):
-        run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-        time.sleep(2)
-        print(LOG_PREFIX + "Processing " + p["title"] + " for " + remote_code_file.filename + "...")
+    def _create_prompt_message(self, p: json.JSONValue):
+        self._client.beta.threads.messages.create(
+            self._thread.id,
+            role="user",
+            content=p['description']
+        )
 
-      # Write out only the messages from the thread
-      messages = client.beta.threads.messages.list(run_id=run.id, thread_id=thread.id)
-      for m in messages.data:
-        for c in m.content:
-          if c.text.value.startswith(output_delimiters.ERROR_FRAGMENT):
-            print(LOG_PREFIX + "Error Fragment: " + remote_code_file.filename + "\n")
-            file_fragment_error = True
-          elif c.text.value.startswith(output_delimiters.START_DESCRIPTION):
-            markdown_file.write("\n" + "# "+ remote_code_file.filename + "\n")
-            markdown_file.write("\n" + "## Description of "+ remote_code_file.filename + "\n")
-            c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
-            markdown_file.write(c.text.value + "\n")
-          elif c.text.value.startswith(output_delimiters.START_FUNCTIONS):
-            markdown_file.write("\n" + "## Functions in " + remote_code_file.filename + "\n")
-            c.text.value = c.text.value.replace(output_delimiters.START_FUNCTIONS, "")
-            markdown_file.write(c.text.value + "\n")
-          elif c.text.value.startswith(output_delimiters.START_SV):
-            markdown_file.write("\n" + "## Security Vulnerabilities in " + remote_code_file.filename + "\n")
-            c.text.value = c.text.value.replace(output_delimiters.START_SV, "")
-            markdown_file.write(c.text.value + "\n")
-          # DEBUG
-          print(LOG_PREFIX + c.text.value)
-          if (file_fragment_error):
-            exit(1) #no need to keep parsing due to openai errors
+    def _create_run(self, stream: bool):
+        return self._client.beta.threads.runs.create(
+            thread_id=self._thread.id,
+            assistant_id=self._assistant.id,
+            stream=stream
+        )
+
+    def _run_stream(self, run):
+        for event in run:
+            match event.event:
+                case "thread.message.delta":
+                    val = event.data.delta.content[0].text.value
+                    if (val != None):
+                        stdout.write(val)
+                case default:
+                    stdout.write(".")
+            stdout.flush()
+
+    def _run_markdown(self, rf, p, run):
+        # We are writing markdown files
+        # Open the markdown file for the output with mode append
+        markdown_file = open("./doc/"+rf.filename.split(".")[0]+".md", "a")
+
+        # Wait for the run to complete and print out the messages
+        while (run.status != "completed"):
+            run = self._client.beta.threads.runs.retrieve(thread_id=self._thread.id, run_id=run.id)
+            time.sleep(2)
+            print(self.LOG_PREFIX + "Processing " + p["title"] + " for " + rf.filename + "...")
+
+        # Write out only the messages from the thread
+        messages = self._client.beta.threads.messages.list(run_id=run.id, thread_id=self._thread.id)
+        for m in messages.data:
+            for c in m.content:
+                if c.text.value.startswith(output_delimiters.ERROR_FRAGMENT):
+                    print(self.LOG_PREFIX + "Error Fragment: " + rf.filename + "\n")
+                    file_fragment_error = True
+                elif c.text.value.startswith(output_delimiters.START_DESCRIPTION):
+                    markdown_file.write("\n" + "# "+ rf.filename + "\n")
+                    markdown_file.write("\n" + "## Description of "+ rf.filename + "\n")
+                    c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
+                    markdown_file.write(c.text.value + "\n")
+                elif c.text.value.startswith(output_delimiters.START_FUNCTIONS):
+                    markdown_file.write("\n" + "## Functions in " + rf.filename + "\n")
+                    c.text.value = c.text.value.replace(output_delimiters.START_FUNCTIONS, "")
+                    markdown_file.write(c.text.value + "\n")
+                elif c.text.value.startswith(output_delimiters.START_SV):
+                    markdown_file.write("\n" + "## Security Vulnerabilities in " + rf.filename + "\n")
+                    c.text.value = c.text.value.replace(output_delimiters.START_SV, "")
+                    markdown_file.write(c.text.value + "\n")
+                # DEBUG
+                print(self.LOG_PREFIX + c.text.value)
+                if (file_fragment_error):
+                    exit(1) #no need to keep parsing due to openai errors
       
-      # Close the markdown file
-      markdown_file.close()
-      print(LOG_PREFIX + "Wrote markdown file " + markdown_file.name)
+        # Close the markdown file
+        markdown_file.close()
+        print(self.LOG_PREFIX + "Wrote markdown file " + markdown_file.name)
