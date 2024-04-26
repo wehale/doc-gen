@@ -1,5 +1,4 @@
 import argparse
-import glob
 import oaigen
 import os
 import yaml
@@ -15,16 +14,9 @@ args = parser.parse_args()
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
-#debug
-print(config)
-exit()
-
-files = glob.glob("./src/*")
-
-prompts_file_str = "./prompt/prompts.jsonl"
-
-key = os.environ['OPENAI_API_KEY']
-oaigenerator = oaigen.OpenAIGenerator(args, key, files, prompts_file_str)
-
-oaigenerator.generate()
+if (config['oaillm']['use']):
+    # Use OpenAI's LLM to generate the doc
+    key = os.environ['OPENAI_API_KEY']
+    oaigenerator = oaigen.OpenAIGenerator(args, key, config)
+    oaigenerator.generate()
   
