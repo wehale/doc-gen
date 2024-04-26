@@ -2,3 +2,4 @@ dgv/
 doc/
 doc_pub/_build/
 __pycache__/
+.vscode/

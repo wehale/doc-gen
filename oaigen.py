@@ -1,7 +1,7 @@
 from openai import OpenAI
 import time
-import json
 from sys import stdout
+import jsonlines
 
 class output_delimiters:
   ERROR_FRAGMENT = "[ERROR_FRAGMENT]"
@@ -21,8 +21,7 @@ class OpenAIGenerator:
         self._client = OpenAI(api_key=key)
         self._args = args
         self._files = files
-        self._prompts = prompts
-        self._fragment_error = False
+        self._prompts_file_str = prompts
         self._assistant = None
         self._thread = None
 
@@ -36,7 +35,8 @@ class OpenAIGenerator:
         for lf in self._files:
             rf = self._find_or_create_remote_file(lf)
             self._delete_local_markdown_file(rf)
-            for p in self._prompts.iter():
+            ps = jsonlines.open(self._prompts_file_str) #can't loop jsonlines reader more than once
+            for p in ps:
                 self._create_prompt_message(p)
                 run = self._create_run(self._args.stream)
                 if self._args.stream:
@@ -74,7 +74,7 @@ class OpenAIGenerator:
                 name=self.ASSISTANT_NAME,
                 instructions="You are a code documentation generator. Given a code file, write the documentation for it.",
                 tools=[{"type": "code_interpreter"}],
-                model="gpt-4-turbo",
+                model="gpt-3.5-turbo",
                 # temperature=0.15 # Can't do this yet in the beta api unfortunately, even though it says you can in the API Docs (ironic?)
                 # https://community.openai.com/t/how-to-set-temperature-and-other-sampling-parameters-of-model-in-open-ai-assistant-api/486368/22
             )
@@ -97,7 +97,7 @@ class OpenAIGenerator:
         if remote_code_file is None:
             remote_code_file = self._client.files.create(file=open(lf, "rb"), purpose="assistants")
             print(self.LOG_PREFIX + "Created code file " + remote_code_file.filename + ": " + remote_code_file.id)
-            time.sleep(2) # Wait for the file to be uploaded to remote before continuing
+            time.sleep(2) # DEBUG: Wait for the file to be uploaded to remote before continuing, snippet problem?
   
         # Create file message for the thread
         self._client.beta.threads.messages.create(
@@ -106,15 +106,16 @@ class OpenAIGenerator:
             content="Code file", 
             attachments=[{"file_id": remote_code_file.id, "tools": [{"type": "code_interpreter"}]}]
         )
+        time.sleep(2) # DEBUG: Trying to resolve snippet problem
 
         return remote_code_file
 
-    def _delete_local_markdown_file(self, rf: str):
+    def _delete_local_markdown_file(self, rf):
         if not self._args.stream:
-            open("./doc/"+rf.split(".")[0]+".md", "w").close()
+            open("./doc/"+rf.filename.split(".")[0]+".md", "w").close()
 
 
-    def _create_prompt_message(self, p: json.JSONValue):
+    def _create_prompt_message(self, p):
         self._client.beta.threads.messages.create(
             self._thread.id,
             role="user",
@@ -154,10 +155,7 @@ class OpenAIGenerator:
         messages = self._client.beta.threads.messages.list(run_id=run.id, thread_id=self._thread.id)
         for m in messages.data:
             for c in m.content:
-                if c.text.value.startswith(output_delimiters.ERROR_FRAGMENT):
-                    print(self.LOG_PREFIX + "Error Fragment: " + rf.filename + "\n")
-                    file_fragment_error = True
-                elif c.text.value.startswith(output_delimiters.START_DESCRIPTION):
+                if c.text.value.startswith(output_delimiters.START_DESCRIPTION):
                     markdown_file.write("\n" + "# "+ rf.filename + "\n")
                     markdown_file.write("\n" + "## Description of "+ rf.filename + "\n")
                     c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
@@ -172,8 +170,6 @@ class OpenAIGenerator:
                     markdown_file.write(c.text.value + "\n")
                 # DEBUG
                 print(self.LOG_PREFIX + c.text.value)
-                if (file_fragment_error):
-                    exit(1) #no need to keep parsing due to openai errors
       
         # Close the markdown file
         markdown_file.close()

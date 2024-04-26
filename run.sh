@@ -43,7 +43,7 @@ fi
 
 # Run the application
 echo "Running the application"
-python doc-gen.py $1 $2 $3 $4 $5 $6 $7 $8 $9
+python docgen.py $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 # Copy generated .md files to the pub directory
 echo "Copying generated .md files to the pub directory"
