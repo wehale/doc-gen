@@ -8,8 +8,10 @@ import jsonlines
 
 ASSISTANT_NAME = "doc-gen"
 LOG_PREFIX = "[doc-gen.py]>"
+file_fragment_error = False #open ai is having issues accessing files
 
 class output_delimiters:
+  ERROR_FRAGMENT = "[ERROR_FRAGMENT]"
   START_DESCRIPTION = "[SD]"
   END_DESCRIPTION = "[ED]"
   START_FUNCTIONS = "[SF]"
@@ -148,7 +150,10 @@ for local_code_file in local_code_files:
       messages = client.beta.threads.messages.list(run_id=run.id, thread_id=thread.id)
       for m in messages.data:
         for c in m.content:
-          if c.text.value.startswith(output_delimiters.START_DESCRIPTION):
+          if c.text.value.startswith(output_delimiters.ERROR_FRAGMENT):
+            print(LOG_PREFIX + "Error Fragment: " + remote_code_file.filename + "\n")
+            file_fragment_error = True
+          elif c.text.value.startswith(output_delimiters.START_DESCRIPTION):
             markdown_file.write("\n" + "# "+ remote_code_file.filename + "\n")
             markdown_file.write("\n" + "## Description of "+ remote_code_file.filename + "\n")
             c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
@@ -163,6 +168,8 @@ for local_code_file in local_code_files:
             markdown_file.write(c.text.value + "\n")
           # DEBUG
           print(LOG_PREFIX + c.text.value)
+          if (file_fragment_error):
+            exit(1) #no need to keep parsing due to openai errors
       
       # Close the markdown file
       markdown_file.close()
