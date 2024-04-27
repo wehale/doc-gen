@@ -115,7 +115,9 @@ class OpenAIGenerator:
 
     def _delete_local_markdown_file(self, rf):
         if not self._args.stream:
-            open(self._config['output']['path']+ "/" +rf.filename.split(".")[0]+".md", "w").close()
+            open(self._config['output']['path']+ "/" +
+                 self._config['oaillm']['gen_file_prefix'] +
+                 rf.filename.split(".")[0]+".md", "w").close()
 
 
     def _create_prompt_message(self, p):
@@ -146,7 +148,9 @@ class OpenAIGenerator:
     def _run_markdown(self, rf, p, run):
         # We are writing markdown files
         # Open the markdown file for the output with mode append
-        markdown_file = open(self._config['output']['path']+ "/" +rf.filename.split(".")[0]+".md", "a")
+        markdown_file = open(self._config['output']['path']+ "/" +
+                             self._config['oaillm']['gen_file_prefix'] +
+                             rf.filename.split(".")[0]+".md", "a")
 
         # Wait for the run to complete and print out the messages
         while (run.status != "completed"):

@@ -26,3 +26,10 @@ oaillm:
   use: True
   name: OpenAI LLM
   model: gpt-4-turbo
+  gen_file_prefix: _oaillm_
+gllm:
+  use: False
+  name: Google AI LLM
+  model: gemini
+  gen_file_prefix: _gllm_
+
