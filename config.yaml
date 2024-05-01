@@ -17,19 +17,20 @@ output:
 docpub:
   path: ./doc_pub
 
-#Prompt Settings
-prompt:
-  path: ./prompt/prompts.jsonl
-
 # LLM Settings
 oaillm:
   use: True
   name: OpenAI LLM
   model: gpt-4-turbo
   gen_file_prefix: _oaillm_
+  description_prefix: OpenAI
+  prompts: ./prompt/prompts_oai.jsonl
+
 gllm:
-  use: False
+  use: True
   name: Google AI LLM
-  model: gemini
+  model: gemini-pro
   gen_file_prefix: _gllm_
+  description_prefix: GoogleAI
+  prompts: ./prompt/prompts_gai.jsonl
 

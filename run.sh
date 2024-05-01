@@ -45,9 +45,17 @@ fi
 echo "Running the application"
 python ./src/docgen.py $1 $2 $3 $4 $5 $6 $7 $8 $9
 
+# Clear .md files from the doc_pub directory
+echo "Clearing .md files from the doc_pub directory"
+rm -f ./doc_pub/*.md
+
 # Copy generated .md files to the pub directory
 echo "Copying generated .md files to the pub directory"
 cp -f ./doc/*.md ./doc_pub/
+
+# Create index.rst file
+echo "Creating ./doc_pub/index.rst file"
+python ./src/create_index_rst.py
 
 # Run sphinx, `make html` in the doc_pub directory
 cd ./doc_pub

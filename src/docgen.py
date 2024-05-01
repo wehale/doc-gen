@@ -20,7 +20,8 @@ if (config['oaillm']['use']):
     key = os.environ['OPENAI_API_KEY']
     oaigenerator = oaigen.OpenAIGenerator(args, key, config)
     oaigenerator.generate()
-elif (config['gllm']['use']):
+
+if (config['gllm']['use']):
     # Use Google's LLM to generate the doc
     key = os.environ['GOOGLEAI_API_KEY']
     ggenerator = ggen.GoogleAIGenerator(args, key, config)

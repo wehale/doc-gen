@@ -3,3 +3,4 @@ doc/
 doc_pub/_build/
 __pycache__/
 .vscode/
+pub_bak/

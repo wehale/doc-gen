@@ -5,13 +5,9 @@ import jsonlines
 import glob
 
 class output_delimiters:
-  ERROR_FRAGMENT = "[ERROR_FRAGMENT]"
   START_DESCRIPTION = "[SD]"
-  END_DESCRIPTION = "[ED]"
   START_FUNCTIONS = "[SF]"
-  END_FUNCTIONS = "[EF]"
   START_SV = "[SSV]"
-  END_SV = "[ESV]"
 
 class OpenAIGenerator:
 
@@ -23,7 +19,7 @@ class OpenAIGenerator:
         self._args = args
         self._config = config
         self._files = glob.glob(self._config['input']['path']+"/*")
-        self._prompts_file_str = self._config['prompt']['path']
+        self._prompts_file_str = self._config['oaillm']['prompts']
         self._assistant = None
         self._thread = None
 
@@ -163,7 +159,8 @@ class OpenAIGenerator:
         for m in messages.data:
             for c in m.content:
                 if c.text.value.startswith(output_delimiters.START_DESCRIPTION):
-                    markdown_file.write("\n" + "# "+ rf.filename + "\n")
+                    markdown_file.write("\n" + "# "+ self._config['oaillm']['description_prefix'] +
+                                         ": " + rf.filename + "\n")
                     markdown_file.write("\n" + "## Description of "+ rf.filename + "\n")
                     c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
                     markdown_file.write(c.text.value + "\n")

@@ -5,3 +5,5 @@ myst_parser
 jsonlines
 sphinx_rtd_theme
 pyyaml
+google-generativeai
+huggingface_hub
