@@ -1,8 +1,6 @@
 
 # Original: SpellChecker.java
 ```java
-// from the program by Farshad Rum
-// simplified a little by eoneil for class solutions.
 package cs310;
 
 import java.io.FileNotFoundException;
@@ -19,26 +17,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class SpellChecker {
-	/*
-	 * misspelled is a map from the misspelled words to list of lines where
-	 * they happened. .
-	 */
 	private Map<String, List<Integer>> misspelled = new HashMap<String, List<Integer>>();
-	// the dictionary in use to check words
 	private Set<String> dictionary;
 
-	// In this implementation, the dictionary is loaded outside SpellChecker 
-	// and its Set<String> is passed in here. Alternatively, the constructor
-	// could take the dictionary filename as an argument instead.
 	public SpellChecker(Set<String> dic) {
 		dictionary = dic;
 	}
 
-	// This is the main processing loop. It should be in an object method rather
-	// than in main for greater reusability (we could have multiple
-	// SpellCheckers built around different dictionaries in an app).
-	// Note that this method throws on file not found, because it
-	// doesn't know how to handle it. That's fine--let main take care of it.
 	public void checkWords(String inFile) throws FileNotFoundException {
 
 		Scanner in = new Scanner(new FileReader(inFile));
@@ -47,12 +32,7 @@ public class SpellChecker {
 		while (in.hasNextLine()) {
 			String line = in.nextLine();
 			lineNum++;
-			// Alternatively here, assume spaces between words: line.split(" ");
-			// Best way: split on white space as follows--
 			String[] tokens = line.split("\\s+");
-			// or use a Scanner for the line with next(), which by default uses
-			// whitespace delimitation, or use a Scanner with a delimiter
-			// set to a regular expression such as in the above comment.
 
 			for (String word : tokens) {
 				if (!dictionary.contains(word)) {
@@ -67,10 +47,6 @@ public class SpellChecker {
 		}
 		in.close();
 
-		/*
-		 * After the analysis is done print the findings with each misspelled word
-		 * followed by lines where it happened and list of possible corrections
-		 */
 		Set<String> words = misspelled.keySet();
 		for (String word : words) {
 			List<Integer> lines = misspelled.get(word);
@@ -79,9 +55,6 @@ public class SpellChecker {
 		}
 	}
 
-	/*
-	 * Finds possible alternatives to a misspelled word.
-	 */
 	private Set<String> findAlternatives(String word) {
 		List<String> list1 = addChar(word);
 		List<String> list2 = removeChar(word);
@@ -91,9 +64,7 @@ public class SpellChecker {
 		alterSet.addAll(list1);
 		alterSet.addAll(list2);
 		alterSet.addAll(list3);
-		// In this implementation, the alternatives are first collected, then checked
-		// against the dictionary. Alternatively (and arguably better), check them
-		// during the process of collecting them.
+
 		Iterator<String> iter = alterSet.iterator();
 		while (iter.hasNext()) {
 			String alter = iter.next();
@@ -102,11 +73,6 @@ public class SpellChecker {
 		}
 		return alterSet;
 	}
-
-	/*
-	 * Returns a list of possible words composed by adding a character to anywhere
-	 * in the given word
-	 */
 
 	private static List<String> addChar(String aWord) {
 		StringBuilder wordBuff = new StringBuilder(aWord);
@@ -123,11 +89,6 @@ public class SpellChecker {
 		return result;
 	}
 
-	/*
-	 * Returns a list of possible alternatives by removing one character from
-	 * anywhere in the word
-	 */
-
 	private static List<String> removeChar(String aWord) {
 		StringBuilder wordBuff = new StringBuilder(aWord);
 		List<String> result = new ArrayList<String>();
@@ -141,10 +102,6 @@ public class SpellChecker {
 
 	}
 
-	/*
-	 * Returns a list of words by exchanging adjacent characters in the misspelled
-	 * word.
-	 */
 	private static List<String> xchangeChar(String aWord) {
 
 		List<String> result = new ArrayList<String>();
@@ -158,8 +115,6 @@ public class SpellChecker {
 		return result;
 	}
 
-	// helper to main: load word files into main dictionary
-	// Alternatively, add this responsibility to SpellChecker itself
 	public static void loadDictionary(Set<String> dic, String dictFile) throws FileNotFoundException {
 		Scanner fileIn = new Scanner(new FileReader(dictFile));
 		while (fileIn.hasNext()) {
@@ -176,19 +131,14 @@ public class SpellChecker {
 		String dictionary = args[1];
 		Set<String> dic = new TreeSet<String>();
 		try {
-			// one way: load dictionary into a Set<String> before creating SpellChecker
-			// Alternatively, have SpellChecker do the dictionary load itself
 			loadDictionary(dic, dictionary);
-			// create a SpellChecker with the dictionary
 			SpellChecker checker = new SpellChecker(dic);
-			// check words in inFile and report on them
 			checker.checkWords(inFile);
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found: " + e);
-			e.printStackTrace(); // for debugging (remove for production version)
+			e.printStackTrace();
 		}
 
 	}
-
 }
 ```
