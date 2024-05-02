@@ -1,6 +1,8 @@
 import argparse
 import oaigen
 import ggen
+import hfgen
+import origgen
 import os
 import yaml
 
@@ -15,6 +17,11 @@ args = parser.parse_args()
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
+if (config['orig']['use']):
+    # Use the original generator to generate the doc
+    origgenerator = origgen.OriginalGenerator(config, args)
+    origgenerator.generate()
+
 if (config['oaillm']['use']):
     # Use OpenAI's LLM to generate the doc
     key = os.environ['OPENAI_API_KEY']
@@ -26,4 +33,9 @@ if (config['gllm']['use']):
     key = os.environ['GOOGLEAI_API_KEY']
     ggenerator = ggen.GoogleAIGenerator(args, key, config)
     ggenerator.generate()
-  
+
+if (config['hfllm']['use']):
+    # Use HuggingFace's LLM to generate the doc
+    key = os.environ['HF_API_KEY']
+    hfgenerator = hfgen.HuggingFaceGenerator(args, key, config)
+    hfgenerator.generate()

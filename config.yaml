@@ -17,10 +17,17 @@ output:
 docpub:
   path: ./doc_pub
 
+# Original Gen Settings
+orig:
+  use: True
+  name: Original
+  gen_file_prefix: _orig_
+  description_prefix: Original
+  
 # LLM Settings
 oaillm:
   use: True
-  name: OpenAI LLM
+  name: OpenAI
   model: gpt-4-turbo
   gen_file_prefix: _oaillm_
   description_prefix: OpenAI
@@ -28,9 +35,16 @@ oaillm:
 
 gllm:
   use: True
-  name: Google AI LLM
+  name: Google AI
   model: gemini-pro
   gen_file_prefix: _gllm_
   description_prefix: GoogleAI
   prompts: ./prompt/prompts_gai.jsonl
 
+hfllm:
+  use: True
+  name: Hugging Face
+  model: openai-community/gpt2
+  gen_file_prefix: _hfllm_
+  description_prefix: HuggingFace
+  prompts: ./prompt/prompts_hf.jsonl

@@ -2,7 +2,12 @@ import google.generativeai as gai
 import jsonlines as jsonl
 import glob
 
+
+
 class GoogleAIGenerator:
+
+    LOG_PREFIX = "[gai-gen]>"
+
     def __init__(self, args, key, config):
         self._args = args
         self._key = key
@@ -12,7 +17,7 @@ class GoogleAIGenerator:
         self._prompts_file_str = self._config['gllm']['prompts']
 
     def generate(self):
-        print(f"{self._config['gllm']['name']} is generating...")
+        print(self.LOG_PREFIX + f"{self._config['gllm']['name']} is generating...")
         for f in self._files:
             input_file = open(f, 'r')
             input_file_split = f.split("/")
@@ -27,7 +32,7 @@ class GoogleAIGenerator:
             ps = jsonl.open(self._prompts_file_str)
             for prompt in ps:
                 content = chat.send_message(prompt['description'])
-                print(content.text)
+                print(self.LOG_PREFIX + content.text)
                 output_file.write("\n" + "## "+ prompt['title']+ ": " + input_file_name + "\n")
                 output_file.write(content.text)
                 output_file.write("\n")
