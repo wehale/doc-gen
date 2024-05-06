@@ -2,6 +2,7 @@ import google.generativeai as gai
 import jsonlines as jsonl
 import glob
 import time
+import os
 
 
 class GoogleAIGenerator:
@@ -13,8 +14,8 @@ class GoogleAIGenerator:
         self._key = key
         self._config = config
         self._model = gai.GenerativeModel(self._config['gllm']['model'])
-        self._files = glob.glob(self._config['input']['path']+"/*")
-        self._prompts_file_str = self._config['gllm']['prompts']
+        self._files = glob.glob(self._config['input']['doc_path']+"/*")
+        self._prompts_file_str = self._config['gllm']['doc_prompts']
 
     def generate(self) -> dict:
         print(self.LOG_PREFIX + f"{self._config['gllm']['name']} is generating...")
@@ -25,8 +26,10 @@ class GoogleAIGenerator:
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
             output_file_name = self._config['gllm']['gen_file_prefix'] + input_file_split[len(input_file_split)-1].split(".")[0] + ".md"
-            open(self._config['output']['path']+"/"+output_file_name, 'w').close() #clear output file
-            output_file = open(self._config['output']['path']+"/"+output_file_name, 'a') # append the output file
+            output_file_path = self._config['output']['doc_path']+"/"+output_file_name
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+            open(output_file_path, 'w').close() #clear output file
+            output_file = open(self._config['output']['doc_path']+"/"+output_file_name, 'a') # append the output file
             output_file.write("\n" + "# "+ self._config['gllm']['description_prefix'] + ": " + input_file_name + "\n")
             code_file_str_for_prompt = "Consider the following code: \n" + input_file.read()
             chat = self._model.start_chat()

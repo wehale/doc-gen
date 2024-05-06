@@ -2,6 +2,7 @@ import huggingface_hub as hf
 import glob
 import jsonlines as jsonl
 import time
+import os
 
 MAX_TOKENS = 2000 # maximum number of tokens to generate
 
@@ -14,8 +15,8 @@ class HuggingFaceGenerator:
         self._key = key
         self._config = config
         self._model = self._config['hfllm']['model']
-        self._files = glob.glob(self._config['input']['path']+"/*")
-        self._prompts_file_str = self._config['hfllm']['prompts']
+        self._files = glob.glob(self._config['input']['doc_path']+"/*")
+        self._prompts_file_str = self._config['hfllm']['doc_prompts']
         self._client = hf.InferenceClient(token=self._key)
 
     def generate(self) -> dict:
@@ -27,8 +28,10 @@ class HuggingFaceGenerator:
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
             output_file_name = self._config['hfllm']['gen_file_prefix'] + input_file_split[len(input_file_split)-1].split(".")[0] + ".md"
-            open(self._config['output']['path']+"/"+output_file_name, 'w').close() #clear output file
-            output_file = open(self._config['output']['path']+"/"+output_file_name, 'a') # append the output file
+            output_file_path = self._config['output']['doc_path']+"/"+output_file_name
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+            open(output_file_path, 'w').close() #clear output file
+            output_file = open(self._config['output']['doc_path']+"/"+output_file_name, 'a') # append the output file
             output_file.write("\n" + "# "+ self._config['hfllm']['description_prefix'] + ": " + input_file_name + "\n")
             code_file_str_for_prompt = "Consider the following code between the markers <start_code> and <end_code>\n\n<start_code>\n\n" \
                 + input_file.read() + "\n\n<end_code>\n\n"

@@ -3,6 +3,7 @@ import time
 from sys import stdout
 import jsonlines
 import glob
+import os
 
 class output_delimiters:
   START_DESCRIPTION = "[SD]"
@@ -18,8 +19,8 @@ class OpenAIGenerator:
         self._client = OpenAI(api_key=key)
         self._args = args
         self._config = config
-        self._files = glob.glob(self._config['input']['path']+"/*")
-        self._prompts_file_str = self._config['oaillm']['prompts']
+        self._files = glob.glob(self._config['input']['doc_path']+"/*")
+        self._prompts_file_str = self._config['oaillm']['doc_prompts']
         self._assistant = None
         self._thread = None
 
@@ -117,9 +118,11 @@ class OpenAIGenerator:
 
     def _delete_local_markdown_file(self, rf):
         if not self._args.stream:
-            open(self._config['output']['path']+ "/" +
+            output_file_path = (self._config['output']['doc_path']+ "/" +
                  self._config['oaillm']['gen_file_prefix'] +
-                 rf.filename.split(".")[0]+".md", "w").close()
+                 rf.filename.split(".")[0]+".md")
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+            open(output_file_path, "w").close()
 
 
     def _create_prompt_message(self, p):
@@ -150,7 +153,7 @@ class OpenAIGenerator:
     def _run_markdown(self, rf, p, run):
         # We are writing markdown files
         # Open the markdown file for the output with mode append
-        markdown_file = open(self._config['output']['path']+ "/" +
+        markdown_file = open(self._config['output']['doc_path']+ "/" +
                              self._config['oaillm']['gen_file_prefix'] +
                              rf.filename.split(".")[0]+".md", "a")
 

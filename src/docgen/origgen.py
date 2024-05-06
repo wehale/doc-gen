@@ -1,12 +1,13 @@
 import glob
-import code_utils
+import util.code_utils as code_utils
 import time
+import os
 
 class OriginalGenerator():
     def __init__(self, config, args):
         self._config = config
         self._args = args
-        self._files = glob.glob(self._config['input']['path']+"/*")
+        self._files = glob.glob(self._config['input']['doc_path']+"/*")
 
     def generate(self) -> dict:
         stats = {self._config['orig']['description_prefix']: {}}
@@ -15,7 +16,8 @@ class OriginalGenerator():
             input_file = open(f, 'r')
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
-            output_file_path = self._config['output']['path']+"/"+self._config['orig']['gen_file_prefix']+input_file_name.split(".")[0] + ".md"
+            output_file_path = self._config['output']['doc_path']+"/"+self._config['orig']['gen_file_prefix']+input_file_name.split(".")[0] + ".md"
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
             open(output_file_path, 'w').close()
             output_file = open(output_file_path, 'a')
             output_file.write("\n" + "# "+ self._config['orig']['description_prefix'] + ": " + input_file_name + "\n")
