@@ -1,6 +1,7 @@
 import huggingface_hub as hf
 import glob
 import jsonlines as jsonl
+import time
 
 MAX_TOKENS = 2000 # maximum number of tokens to generate
 
@@ -15,12 +16,13 @@ class HuggingFaceGenerator:
         self._model = self._config['hfllm']['model']
         self._files = glob.glob(self._config['input']['path']+"/*")
         self._prompts_file_str = self._config['hfllm']['prompts']
-        # , model=self._model # use the default model
         self._client = hf.InferenceClient(token=self._key)
 
-    def generate(self):
+    def generate(self) -> dict:
         print(f"{self._config['hfllm']['name']} is generating...")
+        stats = {self._config['hfllm']['description_prefix']: {}}
         for f in self._files:
+            t1 = time.time()
             input_file = open(f, 'r')
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
@@ -43,3 +45,6 @@ class HuggingFaceGenerator:
                             self._config['hfllm']['model'] +")\n")
             input_file.close()
             output_file.close()
+            t2 = time.time()
+            stats[self._config['hfllm']['description_prefix']][input_file_name] = t2-t1
+        return stats

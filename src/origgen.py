@@ -1,5 +1,6 @@
 import glob
 import code_utils
+import time
 
 class OriginalGenerator():
     def __init__(self, config, args):
@@ -7,8 +8,10 @@ class OriginalGenerator():
         self._args = args
         self._files = glob.glob(self._config['input']['path']+"/*")
 
-    def generate(self):
+    def generate(self) -> dict:
+        stats = {self._config['orig']['description_prefix']: {}}
         for f in self._files:
+            t1 = time.time()
             input_file = open(f, 'r')
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
@@ -21,3 +24,6 @@ class OriginalGenerator():
             output_file.write("\n```\n")
             input_file.close()
             output_file.close()
+            t2 = time.time()
+            stats[self._config['orig']['description_prefix']][input_file_name] = t2-t1
+        return stats

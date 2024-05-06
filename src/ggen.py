@@ -1,7 +1,7 @@
 import google.generativeai as gai
 import jsonlines as jsonl
 import glob
-
+import time
 
 
 class GoogleAIGenerator:
@@ -16,9 +16,11 @@ class GoogleAIGenerator:
         self._files = glob.glob(self._config['input']['path']+"/*")
         self._prompts_file_str = self._config['gllm']['prompts']
 
-    def generate(self):
+    def generate(self) -> dict:
         print(self.LOG_PREFIX + f"{self._config['gllm']['name']} is generating...")
+        stats = {self._config['gllm']['description_prefix']: {}}
         for f in self._files:
+            t1 = time.time()
             input_file = open(f, 'r')
             input_file_split = f.split("/")
             input_file_name = input_file_split[len(input_file_split)-1]
@@ -41,4 +43,6 @@ class GoogleAIGenerator:
                             self._config['gllm']['model'] +")\n")
             input_file.close()
             output_file.close()
-        
+            t2 = time.time()
+            stats[self._config['gllm']['description_prefix']][input_file_name] = t2-t1
+        return stats

@@ -23,14 +23,16 @@ class OpenAIGenerator:
         self._assistant = None
         self._thread = None
 
-    def generate(self):        
+    def generate(self) -> dict:        
         if self._args.clean_files:
             self._delete_files()
         if self._args.clean_assistants:
             self._delete_assistants()
         self._find_or_create_assistant()
         self._create_thread()
+        stats = {self._config['oaillm']['description_prefix']: {}}
         for lf in self._files:
+            t1 = time.time()
             rf = self._find_or_create_remote_file(lf)
             self._delete_local_markdown_file(rf)
             ps = jsonlines.open(self._prompts_file_str) #can't loop jsonlines reader more than once
@@ -41,7 +43,11 @@ class OpenAIGenerator:
                     self._run_stream(run)
                 else:
                     self._run_markdown(rf, p, run)
-    
+            t2 = time.time()
+            lf_split = lf.split("/")
+            stats[self._config['oaillm']['description_prefix']][lf_split[len(lf_split)-1]] = t2-t1
+        return stats
+
     def _delete_files(self):
         print(self.LOG_PREFIX + "Deleting all files from the project...")
         if self._client.files.list() != None:
