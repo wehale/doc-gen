@@ -1,3 +1,5 @@
+LOG_LEVEL= 100
+
 def get_language_from_extension(ext: str) -> str:
     """
     Get the programming language from the file extension.

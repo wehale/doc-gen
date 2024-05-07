@@ -2,12 +2,20 @@ import glob
 import util.code_utils as code_utils
 import time
 import os
+import logging
+import enlighten
 
 class OriginalGenerator():
-    def __init__(self, config, args):
+    
+    LOG_PREFIX = "[orig-gen]>"
+    PBAR_COLOR = "lightblue"
+    
+    def __init__(self, config, args, manager):
         self._config = config
         self._args = args
         self._files = glob.glob(self._config['input']['doc_path']+"/*")
+        self._log = logging.getLogger(__name__)
+        self._pbar = manager.counter(total=len(self._files), desc=self.LOG_PREFIX, unit="prompts", color=self.PBAR_COLOR)
 
     def generate(self) -> dict:
         stats = {self._config['orig']['description_prefix']: {}}
@@ -28,4 +36,6 @@ class OriginalGenerator():
             output_file.close()
             t2 = time.time()
             stats[self._config['orig']['description_prefix']][input_file_name] = t2-t1
+            self._log.log(code_utils.LOG_LEVEL, "Generated file: " + output_file_path)
+            self._pbar.update()
         return stats

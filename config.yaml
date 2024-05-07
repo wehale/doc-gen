@@ -30,30 +30,30 @@ orig:
 # LLM Settings
 # Configuration settings for OpenAI
 oaillm:
-  use: True # Set to False to disable all of Open AI Run
+  use: True # Set to False to disable all of the Open AI Runs
   name: OpenAI
   model: gpt-4-turbo
   gen_file_prefix: _oaillm_
   description_prefix: OpenAI
-  doc_run : True # Set to False to disable the Open AI Doc Generation
+  doc_run: True # Set to False to disable the Open AI Doc Generation
   doc_prompts: ./prompt/doc_prompts_oai.jsonl
 
 # Configuration settings for Google AI
 gllm:
-  use: True # Set to False to disable all of Google AI Run
+  use: True # Set to False to disable all of the Google AI Runs
   name: Google AI
   model: gemini-pro
   gen_file_prefix: _gllm_
   description_prefix: GoogleAI
-  doc_run : True # Set to False to disable the Google AI Doc Generation
+  doc_run: True # Set to False to disable the Google AI Doc Generation
   doc_prompts: ./prompt/doc_prompts_gai.jsonl
 
 # Configuration settings for Hugging Face
 hfllm:
-  use: True # Set to False to disable all of Hugging Face Run
+  use: True # Set to False to disable all of the Hugging Face Runs
   name: Hugging Face
   model: openai-community/gpt2
   gen_file_prefix: _hfllm_
   description_prefix: HuggingFace
-  doc_run : True # Set to False to disable the Hugging Face Doc Generation
+  doc_run: True # Set to False to disable the Hugging Face Doc Generation
   doc_prompts: ./prompt/doc_prompts_hf.jsonl

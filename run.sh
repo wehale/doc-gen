@@ -21,7 +21,9 @@ if [ ! -d "./build/doc/pub" ]; then
     mkdir -p build/doc/pub
     echo "Creating sphinx template which will be used to publish documentation..."
     cd build/doc/pub
-    sphinx-quickstart
+    cp ../../../pub_template/* ./
+    mkdir _static
+    mkdir _templates
     cd -
 fi
 
@@ -46,6 +48,15 @@ cd ./build/doc/pub
 make html
 cd -
 
+echo "Documentation generation complete and can be viewed at ./build/doc/pub/_build/html/index.html"
+
 # Deactivate the virtual environment
 echo "Deactivating the virtual environment"
 deactivate
+
+# query the user if they would like to view the generated documentation
+echo "Would you like to view the generated documentation? (y/n)"
+read view_doc
+if [ $view_doc == "y" ]; then
+    xdg-open "./build/doc/pub/_build/html/index.html" &
+fi
