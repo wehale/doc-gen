@@ -5,8 +5,8 @@ import jsonlines
 import glob
 import os
 import logging
-import enlighten
 import util.code_utils as code_utils
+import concurrent
 
 class output_delimiters:
   START_DESCRIPTION = "[SD]"
@@ -23,39 +23,37 @@ class OpenAIGenerator:
         self._client = OpenAI(api_key=key)
         self._args = args
         self._config = config
-        self._files = glob.glob(self._config['input']['doc_path']+"/*")
+        self._files = code_utils.get_code_files_from_glob(glob.glob(self._config['input']['doc_path']+"/**/*", recursive=True))
         self._prompts_file_str = self._config['oaillm']['doc_prompts']
-        self._assistant = None
-        self._thread = None
         self._log = logging.getLogger(__name__)
         self._pbar = manager.counter(total=len(self._files)*3, desc=self.LOG_PREFIX, unit="prompts", color=self.PBAR_COLOR)
 
-    def generate(self) -> dict:        
+    def generate(self) -> None:        
         if self._args.clean_files:
             self._delete_files()
         if self._args.clean_assistants:
             self._delete_assistants()
-        self._find_or_create_assistant()
-        self._create_thread()
-        stats_key = self._config['oaillm']['description_prefix']+"Doc"
-        stats = {stats_key: {}}
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self._files))
         for lf in self._files:
-            t1 = time.time()
-            rf = self._find_or_create_remote_file(lf)
-            self._delete_local_markdown_file(rf)
-            ps = jsonlines.open(self._prompts_file_str) #can't loop jsonlines reader more than once
-            for p in ps:
-                self._create_prompt_message(p)
-                run = self._create_run(self._args.stream)
-                if self._args.stream:
-                    self._run_stream(run)
-                else:
-                    self._run_markdown(rf, p, run)
-            t2 = time.time()
-            lf_split = lf.split("/")
-            output_file_name = lf_split[len(lf_split)-1].split(".")[0] + ".md"
-            stats[stats_key][output_file_name] = t2-t1
-        return stats
+            if not os.path.isfile(lf):
+                continue
+            executor.submit(self._gen_markdown_file, lf)
+        # Wait for all the threads to complete
+        executor.shutdown(wait=True)
+
+    def _gen_markdown_file(self, lf):
+        assistant = self._find_or_create_assistant()
+        thread = self._create_thread()
+        rf = self._find_or_create_remote_file(thread, lf)
+        self._delete_local_markdown_file(rf)
+        ps = jsonlines.open(self._prompts_file_str) #can't loop jsonlines reader more than once
+        for p in ps:
+            self._create_prompt_message(p, thread)
+            run = self._create_run(assistant, thread, self._args.stream)
+            if self._args.stream:
+                self._run_stream(run)
+            else:
+                self._run_markdown(rf, p, run, thread)
 
     def _delete_files(self):
         self._log.log(code_utils.LOG_LEVEL, "Deleting all files from the project...")
@@ -72,18 +70,18 @@ class OpenAIGenerator:
                 self._client.beta.assistants.delete(assistant_id=a.id)
                 time.sleep(2)
     
-    def _find_or_create_assistant(self):
+    def _find_or_create_assistant(self) -> any:
         # Create or reuse the assistant, just grabs the first assistant it finds in the project that has the ASSISTANT_NAME
+        assistant = None
         if self._client.beta.assistants.list() != None:
             for a in self._client.beta.assistants.list():
                 if a.name == self.ASSISTANT_NAME:
-                    self._assistant = a
-                    self._log.log(code_utils.LOG_LEVEL, "Found and using existing assistant " + self._assistant.name)
+                    assistant = a
+                    self._log.log(code_utils.LOG_LEVEL, "Found and using existing assistant " + assistant.name)
                     break
-
         # If no assistant was found, create a new one
-        if self._assistant is None: 
-            self._assistant = self._client.beta.assistants.create(
+        if assistant is None: 
+            assistant = self._client.beta.assistants.create(
                 name=self.ASSISTANT_NAME,
                 instructions="You are a code documentation generator. Given a code file, write the documentation for it.",
                 tools=[{"type": "code_interpreter"}],
@@ -91,13 +89,15 @@ class OpenAIGenerator:
                 # temperature=0.15 # Can't do this yet in the beta api unfortunately, even though it says you can in the API Docs (ironic?)
                 # https://community.openai.com/t/how-to-set-temperature-and-other-sampling-parameters-of-model-in-open-ai-assistant-api/486368/22
             )
-            self._log.log(code_utils.LOG_LEVEL, self.LOG_PREFIX+"Failed to find existing assistant, created assistant " + self._assistant.name)
+            self._log.log(code_utils.LOG_LEVEL, self.LOG_PREFIX+"Failed to find existing assistant, created assistant " + assistant.name)
+        return assistant
 
-    def _create_thread(self):
-        self._thread = self._client.beta.threads.create()
-        self._log.log(code_utils.LOG_LEVEL, "Created thread " + self._thread.id)
+    def _create_thread(self) -> any:
+        thread = self._client.beta.threads.create()
+        self._log.log(code_utils.LOG_LEVEL, "Created thread " + thread.id)
+        return thread
 
-    def _find_or_create_remote_file(self, lf: str):
+    def _find_or_create_remote_file(self, thread, lf: str):
         remote_code_file = None
         # Find the remote code file to use if it is already uploaded
         if self._client.files.list() != None:
@@ -115,7 +115,7 @@ class OpenAIGenerator:
   
         # Create file message for the thread
         self._client.beta.threads.messages.create(
-            self._thread.id,
+            thread.id,
             role="user", 
             content="Code file", 
             attachments=[{"file_id": remote_code_file.id, "tools": [{"type": "code_interpreter"}]}]
@@ -133,17 +133,17 @@ class OpenAIGenerator:
             open(output_file_path, "w").close()
 
 
-    def _create_prompt_message(self, p):
+    def _create_prompt_message(self, p, thread):
         self._client.beta.threads.messages.create(
-            self._thread.id,
+            thread.id,
             role="user",
             content=p['description']
         )
 
-    def _create_run(self, stream: bool):
+    def _create_run(self, assistant, thread, stream: bool):
         return self._client.beta.threads.runs.create(
-            thread_id=self._thread.id,
-            assistant_id=self._assistant.id,
+            thread_id=thread.id,
+            assistant_id=assistant.id,
             stream=stream
         )
 
@@ -158,7 +158,7 @@ class OpenAIGenerator:
                     stdout.write(".")
             stdout.flush()
 
-    def _run_markdown(self, rf, p, run):
+    def _run_markdown(self, rf, p, run, thread):
         # We are writing markdown files
         # Open the markdown file for the output with mode append
         markdown_file = open(self._config['output']['doc_path']+ "/" +
@@ -167,12 +167,12 @@ class OpenAIGenerator:
 
         # Wait for the run to complete and print out the messages
         while (run.status != "completed"):
-            run = self._client.beta.threads.runs.retrieve(thread_id=self._thread.id, run_id=run.id)
+            run = self._client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
             time.sleep(2)
             self._log.log(code_utils.LOG_LEVEL, "Processing " + p["title"] + " for " + rf.filename + "...")
 
         # Write out only the messages from the thread
-        messages = self._client.beta.threads.messages.list(run_id=run.id, thread_id=self._thread.id)
+        messages = self._client.beta.threads.messages.list(run_id=run.id, thread_id=thread.id)
         for m in messages.data:
             for c in m.content:
                 if c.text.value.startswith(output_delimiters.START_DESCRIPTION):

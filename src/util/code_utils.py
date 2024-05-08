@@ -1,9 +1,18 @@
+import os
+
 LOG_LEVEL= 100
 
+def get_code_files_from_glob(glob: list):
+    files = []
+    for f in glob:
+        if os.path.isfile(f):
+            f_split = f.split(".")
+            ext = f_split[len(f_split)-1]
+            if (get_language_from_extension(ext) != "plaintext") and os.path.getsize(f) > 0:
+                files.append(f)
+    return files
+
 def get_language_from_extension(ext: str) -> str:
-    """
-    Get the programming language from the file extension.
-    """
     if ext == "py":
         return "python"
     elif ext == "js":
