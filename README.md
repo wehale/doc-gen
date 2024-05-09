@@ -1,12 +1,24 @@
 # doc-gen
 
-Doc-gen is an open source utility for testing the use of Artificial Intelligence (AI) in the Software Development Life Cycle (SDLC). The current version 0.1 allows the user to generate documentation from a set of source code using three different Inference Providers and their associated Large Language Models (LLMs). The Inference Providers that are supported are: OpenAI, Google AI and Hugging Face. The LLMs used can be configured in the root `config.yaml` file.
+Doc-gen is an open source utility for testing the use of Artificial Intelligence (AI) in the Software Development Life Cycle (SDLC). The current version 0.1 allows the user to generate documentation from a set of source code using three different Inference Providers and their associated Large Language Models (LLMs). The Inference Providers that are supported are: [OpenAI](https://openai.com/), [Google AI](https://ai.google/) and [Hugging Face](https://huggingface.co/). The LLMs used can be configured in the root `config.yaml` file.
+
+- [doc-gen](#doc-gen)
+  - [Usage](#usage)
+    - [Platforms supported](#platforms-supported)
+    - [Install Python](#install-python)
+    - [Clone the Repo](#clone-the-repo)
+    - [Configure Your API Keys](#configure-your-api-keys)
+      - [OpenAI API Key](#openai-api-key)
+      - [Google AI API Key](#google-ai-api-key)
+      - [Hugging Face API Key](#hugging-face-api-key)
+  - [Running doc-gen](#running-doc-gen)
+  - [Output](#output)
 
 ## Usage
 
 ### Platforms supported
 
-Doc-gen 0.1 is a command line utility. It has been created and tested on Linux, however it should also run on MacOS and Windows under Windows Subsystem for Linux (WSL) with Ubuntu 22.
+Doc-gen is a command line utility. It has been created and tested on Linux, however it should also run on MacOS and Windows under Windows Subsystem for Linux (WSL) with Ubuntu 22.
 
 ### Install Python
 
@@ -27,7 +39,7 @@ In order to do this you will need both `git` and an `SSH key` in your GitHub acc
 
 Doc-gen supports three different Inference Providers, OpenAI, GoogleAI and Hugging Face. The cost of using these providers varies from free to pay as you go, to a monthly fee. Doc-gen is not paying for access to these providers so you will have to set up your own accounts and set the associated `API Keys` in your system's environment variables. For more information on doing this see below:
 
-#### OpenAI
+#### OpenAI API Key
 
 In order to use OpenAI as an Inference Provider you will need to set up an OpenAI account. Comprehensive information on OpenAI account setup is available here: https://platform.openai.com/docs/quickstart/account-setup. OpenAI has a free tier which is rate limited, or you can choose a pay as you go plan. More information on pricing options at OpenAI are available here: https://openai.com/api/pricing/. The pricing is not too terribly expensive (I spent $30 getting Doc-gen to the 0.1 release). But having said that, it is not free either. If free is what you are looking for you may wish to opt for one of the other Inference Providers listed below.
 
@@ -43,7 +55,7 @@ Once you have added the API key to your `~/.profile` file you'll need to `source
 
 In OpenAI, API Keys are attached to projects. You will want to create a new project and API Key for any testing you do with Doc-gen so that you have a clean sandbox in which to do your work.
 
-#### Google AI
+#### Google AI API Key
 
 In order to use Google AI as an Inference Provider you will need a Google AI (for Developers) account, which you can get through your regular Google Login if you have one for GMail. More information on Google AI for Developers is located here: https://ai.google.dev/gemini-api/docs. Use of Google AI Gemini is free ... to a point based on rate and requests per day (RPD) limits. More information on pricing is available here: https://ai.google.dev/pricing
 
@@ -59,7 +71,7 @@ Once you have added the API key to your `~/.profile` file you'll need to `source
 
 Google AI API Keys are tied to Google Cloud projects. Pricing is also tied to the pricing model chosen for that project. As with OpenAI, if you do a lot of work with this or any other key you'll be gently pushed into pay-as-you-go pricing.
 
-#### Hugging Face
+#### Hugging Face API Key
 
 In order to use Hugging Face as an Inference Provider you will need to create a Hugging Face account. Information on creating an account is available here: https://huggingface.co/welcome. Use of Hugging Face has a (severely rate limited) free tier or you can sign up with a `PRO` account for what is currently $9/month. Information on pricing is available here: https://huggingface.co/pricing
 
