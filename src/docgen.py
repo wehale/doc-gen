@@ -1,5 +1,6 @@
 import argparse
 import docgen.oaigen as oai_doc_gen
+import docgen.az_oaigen as az_oai_doc_gen
 import docgen.ggen as g_doc_gen
 import docgen.hfgen as hf_doc_gen
 import docgen.origgen as orig_doc_gen
@@ -24,7 +25,7 @@ with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 # Create a thread pool executor for processing the doc generation
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
 
 logging.basicConfig(format='[%(name)s]:%(message)s', level=logging.WARN) # Set to ERROR to suppress debug messages
 logger = logging.getLogger(__name__)
@@ -42,6 +43,16 @@ if (config['oaillm']['use'] and checkenv.checkOpenAIKey()):
         # Run the doc generation on the OpenAI project
         oai_doc_generator = oai_doc_gen.OpenAIGenerator(args, key, config, manager)
         executor.submit(oai_doc_generator.generate)
+
+if (config['az_oaillm']['use'] and checkenv.checkAzOpenAIKey()):
+    key = os.environ['AZ_OAI_API_KEY']
+    endpoint = os.environ['AZ_OAI_ENDPOINT']
+    model_name = os.environ['AZ_OAI_MODEL_NAME']
+    if (config['az_oaillm']['doc_run']):
+        # Run the doc generation on the OpenAI project
+        az_oai_doc_generator = az_oai_doc_gen.AzureOpenAIGenerator(args, key, endpoint, model_name, config, manager)
+        executor.submit(az_oai_doc_generator.generate)
+
 
 if (config['gllm']['use'] and checkenv.checkGoogleAIKey()):
     key = os.environ['GOOGLE_API_KEY']

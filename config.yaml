@@ -23,7 +23,7 @@ docpub:
 # Original Gen Settings, settings for generating reference files for the original input files
 # So that they can be viewed alongside the generated output
 orig:
-  use: True
+  use: False
   name: Original
   gen_file_prefix: _orig_
   description_prefix: Original
@@ -38,6 +38,17 @@ oaillm:
   description_prefix: OpenAI
   doc_run: True # Set to False to disable the Open AI Doc Generation
   doc_prompts: ./prompt/doc_prompts_oai.jsonl # Open AI prompts used for doc generation
+
+# LLM Settings
+# Configuration settings for Azure OpenAI
+az_oaillm:
+  use: False # Set to False to disable all of the Open AI Runs
+  name: AzureOpenAI
+  model: gpt-4 # The model to use for the Azure OpenAI runs, model_name is taken from the environment variables
+  gen_file_prefix: _az_oaillm_ # prefix attached to the generated files so that they can be identified
+  description_prefix: AzureOpenAI
+  doc_run: True # Set to False to disable the Azure Open AI Doc Generation
+  doc_prompts: ./prompt/doc_prompts_oai.jsonl # Azure Open AI prompts used for doc generation
 
 # Configuration settings for Google AI
 gllm:

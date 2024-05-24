@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import AzureOpenAI
 import time
 from sys import stdout
 import jsonlines
@@ -13,28 +13,53 @@ class output_delimiters:
   START_FUNCTIONS = "[SF]"
   START_SV = "[SSV]"
 
-class OpenAIGenerator:
+class AzureOpenAIGenerator:
 
     ASSISTANT_NAME = "doc-gen"
-    LOG_PREFIX = "[oai-gen]>"
-    PBAR_COLOR = "lightgreen"
+    LOG_PREFIX = "[az-oai-gen]>"
+    PBAR_COLOR = "darkgreen"
 
-    def __init__(self, args, key, config, manager):
-        self._client = OpenAI(api_key=key)
+    def __init__(self, args, key, endpoint, model_name, config, manager):
+        self._client = AzureOpenAI(api_key=key, 
+                                   api_version="2024-05-01-preview", # hardcoded for now 
+                                   azure_endpoint=endpoint)
+        self._model_name = model_name
         self._args = args
         self._config = config
         self._files = code_utils.get_code_files_from_glob(glob.glob(self._config['input']['doc_path']+"/**/*", recursive=True))
-        self._prompts_file_str = self._config['oaillm']['doc_prompts']
+        self._prompts_file_str = self._config['az_oaillm']['doc_prompts']
         self._log = logging.getLogger(__name__)
         self._assistant = None
         self._pbar = manager.counter(total=len(self._files)*3, desc=self.LOG_PREFIX, unit="prompts", color=self.PBAR_COLOR)
+
+    # def generate(self) -> None:    
+        # Test
+        # response = self._client.chat.completions.create(
+        #     model=self._model_name, # model = "deployment_name".
+        #     messages=[
+        #         {"role": "system", "content": "Assistant is a large language model trained by OpenAI."},
+        #         {"role": "user", "content": "Who were the founders of Microsoft?"}
+        #     ]
+        # )
+        # print(response.choices[0].message.content)
+        # executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self._files))
+        # for lf in self._files:
+        #     if not os.path.isfile(lf):
+        #         continue
+        #    executor.submit(self._gen_markdown_file, lf)
+        # Wait for all the threads to complete
+        # executor.shutdown(wait=True)
 
     def generate(self) -> None:        
         if self._args.clean_files:
             self._delete_files()
         if self._args.clean_assistants:
             self._delete_assistants()
-        self._assistant = self._find_or_create_assistant()
+        try:
+            self._assistant = self._find_or_create_assistant()
+        except Exception as e:
+            print(f"Error finding or creating assistant: {e}")
+            exit(1)
         time.sleep(2) # DEBUG: Wait for the assistant to be created before continuing
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(self._files))
         for lf in self._files:
@@ -87,9 +112,7 @@ class OpenAIGenerator:
                 name=self.ASSISTANT_NAME,
                 instructions="You are a code documentation generator. Given a code file, write the documentation for it.",
                 tools=[{"type": "code_interpreter"}],
-                model=self._config['oaillm']['model'],
-                # temperature=0.15 # Can't do this yet in the beta api unfortunately, even though it says you can in the API Docs (ironic?)
-                # https://community.openai.com/t/how-to-set-temperature-and-other-sampling-parameters-of-model-in-open-ai-assistant-api/486368/22
+                model=self._model_name,
             )
             self._log.log(code_utils.LOG_LEVEL, self.LOG_PREFIX+"Failed to find existing assistant, created assistant " + assistant.name)
         return assistant
@@ -129,7 +152,7 @@ class OpenAIGenerator:
     def _delete_local_markdown_file(self, rf):
         if not self._args.stream:
             output_file_path = (self._config['output']['doc_path']+ "/" +
-                 self._config['oaillm']['gen_file_prefix'] +
+                 self._config['az_oaillm']['gen_file_prefix'] +
                  rf.filename.split(".")[0]+".md")
             os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
             open(output_file_path, "w").close()
@@ -164,21 +187,24 @@ class OpenAIGenerator:
         # We are writing markdown files
         # Open the markdown file for the output with mode append
         markdown_file = open(self._config['output']['doc_path']+ "/" +
-                             self._config['oaillm']['gen_file_prefix'] +
+                             self._config['az_oaillm']['gen_file_prefix'] +
                              rf.filename.split(".")[0]+".md", "a")
 
         # Wait for the run to complete and print out the messages
         while (run.status != "completed"):
             run = self._client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
             time.sleep(2)
-            self._log.log(code_utils.LOG_LEVEL, "Processing " + p["title"] + " for " + rf.filename + "...")
+            self._log.log(code_utils.LOG_LEVEL, "Processing " + p["title"] + " for " + rf.filename + "..." + run.status)
+            if (run.status == "failed"):
+                self._log.log(code_utils.LOG_LEVEL, "Failed to process " + p["title"] + " for " + rf.filename + "...")
+                break
 
         # Write out only the messages from the thread
         messages = self._client.beta.threads.messages.list(run_id=run.id, thread_id=thread.id)
         for m in messages.data:
             for c in m.content:
                 if c.text.value.startswith(output_delimiters.START_DESCRIPTION):
-                    markdown_file.write("\n" + "# "+ self._config['oaillm']['description_prefix'] +
+                    markdown_file.write("\n" + "# "+ self._config['az_oaillm']['description_prefix'] +
                                          ": " + rf.filename + "\n")
                     markdown_file.write("\n" + "## Description of "+ rf.filename + "\n")
                     c.text.value = c.text.value.replace(output_delimiters.START_DESCRIPTION, "")
@@ -196,8 +222,8 @@ class OpenAIGenerator:
       
         # Write the bottom tag
         markdown_file.write("\n" + "(Generated by "+ self._config['author'] + 
-                            " using " + self._config['oaillm']['name'] + " " + 
-                            self._config['oaillm']['model'] +")\n")
+                            " using " + self._config['az_oaillm']['name'] + " " + 
+                            self._config['az_oaillm']['model'] +")\n")
         # Close the markdown file
         markdown_file.close()
         self._log.log(code_utils.LOG_LEVEL, "Wrote markdown file " + markdown_file.name)
