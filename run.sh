@@ -1,3 +1,12 @@
+# Get the operating system
+OS=$(uname -s)
+
+# Get the right open command
+OPEN='xdg-open'
+if [ "$OS" == "Darwin" ]; then
+    OPEN='open'
+fi
+
 # Create a virtual environment if it doesn't alreay exist
 echo "Creating a virtual environment if it doesn't already exist"
 python3 -m venv dgv
@@ -58,5 +67,5 @@ deactivate
 echo "Would you like to view the generated documentation? (y/n)"
 read view_doc
 if [ $view_doc == "y" ]; then
-    xdg-open "./build/doc/pub/_build/html/index.html" &
+    eval $OPEN "./build/doc/pub/_build/html/index.html" &
 fi
